@@ -11,6 +11,11 @@ const postUploads =  upload.fields([
 
 
 router.post('/' , protect , postUploads , postController.createPost);
+router.post('/like' , protect ,  postController.LikePost);
+router.put('/:id' , protect , postUploads , postController.updatePost);
+router.delete('/:id' , protect ,  postController.deletePost);
 router.get('/' , protect , postController.getPosts);
+router.get('/:id' , protect , postController.getPostsById);
+router.get('/like/:post_id' , protect , postController.LikePostByCount);
 
 module.exports = router;
