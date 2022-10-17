@@ -25,7 +25,7 @@ app.use("/api/group", require("./routes/groupRoutes"));
 app.use("/api/page", require("./routes/pageRoutes"));
 app.use("/api/story", require("./routes/storyRoutes"));
 app.use("/api/follow", require("./routes/followRoutes"));
-// app.use("/api/friend", require("./routes/friendRoutes"));
+app.use("/api/friend", require("./routes/friendRoutes"));
 
 app.use(globalErrorHandler);
 
