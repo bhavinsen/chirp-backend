@@ -86,6 +86,7 @@ exports.getPosts = catchAsync(async (req, res, next) => {
     data: {
       posts: posts.length > 0 ? posts : "No Post found.",
     },
+    count:posts.length
   });
 });
 //get Post by ID
@@ -209,19 +210,6 @@ exports.LikePost = catchAsync(async (req, res, next) => {
 //post by count user
 exports.LikePostByCount = catchAsync(async (req, res, next) => {
   const { post_id } = req.params;
-
-  // const findOne = await Like.aggregate([
-  //     { $lookup:
-  //         {
-  //             from: "User",
-  //             localField: "_id",
-  //             foreignField: "user_id",
-  //             as: "user"
-  //         }
-  //     },
-  //   //  { $match: {"post_id":post_id}},
-
-  // ])
   const likeCount_Post = await Like.find({ post_id, isLike: true }).populate(
     "user_id"
   );
@@ -234,3 +222,30 @@ exports.LikePostByCount = catchAsync(async (req, res, next) => {
     message: "Likes for this post",
   });
 });
+
+exports.getAllMedia = catchAsync(async (req, res, next) => {
+  const posts = await Post.find().populate(
+    "user",
+    "firstName lastName email profileImage"
+  );
+
+let videos = posts.filter(function (post) {
+  return post.media.length !== 0;
+})
+  return res.status(200).json({
+    status: "success",
+    success: true,
+    data: {
+      posts: videos.length > 0 ? videos : "No Post found.",
+    },
+    count:videos.length
+  });
+});
+
+
+
+
+
+
+
+

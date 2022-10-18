@@ -47,9 +47,7 @@ exports.follow = catchAsync(async (req, res,next) => {
 // get all followers
 exports.getFollowers = catchAsync(async (req, res,next) => {
   const following_id =req.user._id;
-  console.log("🚀 ~ file: followController.js ~ line 50 ~ exports.getFollowers=catchAsync ~ following_id", following_id)
   const followers = await Follow.find({ isFollow: true, following_id:following_id }).populate("follower_id");
-  console.log("🚀 ~ file: followController.js ~ line 52 ~ exports.getFollowers=catchAsync ~ followers", followers)
   if (followers.length>0){
     return res.status(200).json({
       status: "Success",
