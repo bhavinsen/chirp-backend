@@ -37,7 +37,7 @@ exports.register = catchAsync(async(req , res , next) => {
         status : 'success' ,
         success : true , 
         data : { 
-            message : "Registeration successful.",
+            message : "Registration successful.",
             user : newUser ,
             token
         }
