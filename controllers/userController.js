@@ -5,6 +5,8 @@ const Post = require("../models/postModel");
 const Profile = require("../models/profilePicture");
 const Cover = require("../models/coverPicture");
 const { ObjectId } = require("mongodb");
+const path = require("path");
+const fs = require('fs')
 
 // get profile details
 exports.getProfile = catchAsync(async (req, res, next) => {
@@ -36,6 +38,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 //upload profile & cover picture
 exports.uploadProfileOrCoverPicture = catchAsync(async (req, res, next) => {
   const id = req.user._id;
+  console.log(req.files)
   if (typeof req.files !== "undefined" && req.files.profile) {
     const profileImage = await Profile.create({
       user_id: id,
@@ -134,8 +137,14 @@ exports.deleteProfilePicture = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     _id: user_id,
   });
-
-  if (profile.profileImage === user.profileImage) {
+  
+if(!profile){
+  return res.status(400).json({
+    status: "failed",
+    success: false,
+    data: `No Profile Image with id ${id}`,
+  });
+}else if (profile.profileImage === user.profileImage) {
     const newUser = await User.findOneAndUpdate(
       { _id: user_id },
       {
@@ -145,7 +154,10 @@ exports.deleteProfilePicture = catchAsync(async (req, res, next) => {
       { new: true }
     );
   }
+  const profilePath= path.join(`/uploads/${profile.profileImage}`)
+ 
   const deleteProfile = await Profile.findOneAndRemove({ _id: id });
+  fs.unlinkSync(`uploads/${profile.profileImage}`)
   const deletePost = await Post.findOneAndRemove({
     "backgroundImage.profile_id": ObjectId(id),
   });
@@ -164,7 +176,12 @@ exports.deleteCoverPicture = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     _id: user_id,
   });
-  if (cover.coverImage === user.coverImage) {
+  if(!cover){
+  res.status(200).json({
+    status: "failed",
+    success: false,
+    data: `No Profile Image with id ${id}`,
+  })}else if (cover.coverImage === user.coverImage) {
     const newUser = await User.findOneAndUpdate(
       { _id: user_id },
       {
@@ -174,6 +191,8 @@ exports.deleteCoverPicture = catchAsync(async (req, res, next) => {
     );
   }
   const deleteCover = await Cover.findOneAndRemove({ _id: id });
+  const coverPath=path.join(`uploads/${cover.coverImage}`)
+  fs.unlinkSync(coverPath)
   const deletePost = await Post.findOneAndRemove({
     "backgroundImage.cover_id": ObjectId(id),
   });

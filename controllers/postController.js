@@ -3,6 +3,8 @@ const AppError = require("./../utils/appError");
 const Post = require("../models/postModel");
 const Like = require("../models/likeModel");
 const User = require("../models/userModel");
+const path = require("path");
+const fs = require('fs')
 
 const sendCreatePostResponse = (res, post) => {
   return res.status(201).json({
@@ -168,9 +170,26 @@ exports.updatePost = catchAsync(async (req, res, next) => {
 //deletePost
 exports.deletePost = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const post = await Post.findOneAndRemove({ _id: id });
-  if (post) {
-    sendDeleteResponse(res, post);
+  const post = await Post.findOneAndRemove  ({ _id: id });
+    if (post) {
+    if(post.media[0]){
+
+      console.log("In Media",post.media[0].filename)
+      const mediaPath=path.join(`uploads/${post.media[0].filename}`)
+      fs.unlinkSync(mediaPath)
+    }else if(post.backgroundImage){
+      console.log("In backgroundImage",post.backgroundImage.filename)
+
+      const backgroundImagePath=path.join(`uploads/${post.backgroundImage.filename}`)
+      fs.unlinkSync(backgroundImagePath)
+    }else if(post.gif){
+      console.log("In gif",post.gif.filename)
+
+      const gifImagePath=path.join(`uploads/${post.gif.filename}`)
+      fs.unlinkSync(gifImagePath)
+    }
+   return sendDeleteResponse(res, post);
+
   }
   sendResponseRecordsNotFound(res, post);
 });
