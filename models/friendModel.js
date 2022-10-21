@@ -1,21 +1,24 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const friendSchema = new mongoose.Schema({
-     following_id : {
-        type : mongoose.Schema.ObjectId ,
-        ref : "User" ,
-        required : [true]
-    } ,
-    follower_id : {
-        type : mongoose.Schema.ObjectId ,
-        ref : "User" ,
-        required : [true]
+    friends: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+    following_id: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: [true],
     },
-    isFriend:{
-        type:Boolean,
-        default:false,
-    }
-}, { timestamps : true });
+    follower_id: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: [true],
+    },
+    isFriend: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
 
-const Friend = mongoose.model('Friend' , friendSchema);
+const Friend = mongoose.model("Friend", friendSchema);
 module.exports = Friend;

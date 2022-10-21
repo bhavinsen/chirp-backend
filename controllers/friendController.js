@@ -1,22 +1,17 @@
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Friend = require("../models/friendModel");
+const { ObjectId } = require("mongodb");
+const User = require("../models/userModel");
 
-const sendCreatePostResponse = (res, post) => {
-  return res.status(201).json({
-    status: "Success",
-    success: true,
-    data: {
-      post,
-    },
-  });
-};
+
 
 // sent friend request
 exports.friendRequest = catchAsync(async (req, res, next) => {
   const { following_id } = req.body;
   const follower_id = req.user._id;
   const request = await Friend.findOne({ following_id, follower_id });
+  console.log("🚀 ~ file: friendController.js ~ line 14 ~ exports.friendRequest=catchAsync ~ request", request)
   if (request) {
     const cancelRequest = await Friend.findOneAndRemove({
       follower_id,
@@ -28,7 +23,7 @@ exports.friendRequest = catchAsync(async (req, res, next) => {
       data: "Request Cancelled",
     });
   } else {
-    const friendRequest = await Friend.create({ follower_id, following_id });
+    const friendRequest = await Friend.create({ follower_id, following_id,friends:[follower_id,following_id] });
     res.status(200).json({
       status: "Success",
       success: true,
@@ -57,9 +52,7 @@ exports.getAllRequest = catchAsync(async (req, res, next) => {
 // get all sent request
 exports.getAllSendRequest = catchAsync(async (req, res, next) => {
   const user_id = req.user._id;
-  console.log("🚀 ~ file: friendController.js ~ line 60 ~ exports.getAllSendRequest=catchAsync ~ user_id", user_id)
   const request = await Friend.find({ follower_id:user_id,isFriend:false });
-  console.log("🚀 ~ file: friendController.js ~ line 61 ~ exports.getAllSendRequest=catchAsync ~ request", request)
   if (request.length>0) {
     res.status(200).json({
       status: "Success",
@@ -122,12 +115,18 @@ exports.rejectRequest = catchAsync(async (req, res, next) => {
 // get friend list
 exports.getFriendList = catchAsync(async (req, res, next) => {
   const user_id = req.user._id;
-  const result = await Friend.find({$or: [{following_id: user_id}, {follower_id: user_id}], isFriend : true}).populate("follower_id").populate("following_id")
+  const result = await Friend.find({$or: [{following_id: user_id}, {follower_id: user_id}], isFriend : true})
+  // .populate("following_id").populate("follower_id")
+  const data = result.map((newData) =>{
+    return newData.friends.filter((e) => e != `${user_id}` )
+})
+let mergedIds = [].concat.apply([], data);
+const allFriendList = await User.find({_id:{$in: mergedIds}})
   if (result.length > 0) {
     res.status(200).json({
       status: "Success",
       success: true,
-      data: result,
+      data: allFriendList,
     });
   } else {
     res.status(400).json({

@@ -28,7 +28,7 @@ app.use("/api/follow", require("./routes/followRoutes"));
 app.use("/api/friend", require("./routes/friendRoutes"));
 app.use("/api/event", require("./routes/eventRoutes"));
 app.use("/api/about", require("./routes/aboutRoutes"));
-// app.use("/api/mixes", require("./routes/mixesRoutes"));
+app.use("/api/mixes", require("./routes/mixesRoutes"));
 app.use("/api/comment", require("./routes/commentRoutes"));
 
 

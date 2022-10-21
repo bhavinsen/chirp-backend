@@ -1,7 +1,7 @@
 const catchAsync = require("../utils/catchAsync");
 const Event = require("../models/eventModel");
 
-
+// Add event
 exports.createEvent = catchAsync(async (req, res, next) => {
   user_id = req.user._id; 
  const newEvent = await Event.create({ ...req.body, user_id: user_id });
@@ -11,7 +11,7 @@ exports.createEvent = catchAsync(async (req, res, next) => {
     data:newEvent,    
   });
 });
-
+// Update event
 exports.updateEvent = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const event = await Event.findOneAndUpdate({ _id: id }, req.body, {
@@ -30,7 +30,7 @@ exports.updateEvent = catchAsync(async (req, res, next) => {
     data:event,    
   });
 });
-
+//Get event by id
 exports.getByIdEvent = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const event = await Event.findOne({ _id: id });
@@ -47,6 +47,7 @@ exports.getByIdEvent = catchAsync(async (req, res, next) => {
     data:event,    
   });
 });
+// Get all event
 exports.getAllEvent = catchAsync(async (req, res, next) => {
   const user_id = req.user._id;
   const event = await Event.find({ user_id: user_id });
@@ -64,6 +65,7 @@ exports.getAllEvent = catchAsync(async (req, res, next) => {
     count:event.length   
   });
 });
+// Delete event
 exports.deleteEvent = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const event = await Event.findOneAndRemove({ _id: id });
@@ -80,6 +82,7 @@ exports.deleteEvent = catchAsync(async (req, res, next) => {
     data:"Event Deleted successfully" 
   });
 });
+// Get all recent events
 exports.getAllRecentEvent = catchAsync(async (req, res, next) => {
     const user_id = req.user._id;
     const event = await Event.find({ user_id: user_id }).sort("-createdAt");
@@ -97,6 +100,7 @@ exports.getAllRecentEvent = catchAsync(async (req, res, next) => {
       count:event.length   
     });
   });
+  // Get all past events
   exports.getAllPastEvent = catchAsync(async (req, res, next) => {
     const user_id = req.user._id;
     const event = await Event.find({ user_id: user_id }).sort("createdAt");
