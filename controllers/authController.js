@@ -18,7 +18,7 @@ const sendCookie = (res , token) => {
     return res.cookie('token' , token  , cookieOptions  );
 }
 
-
+// Register user
 exports.register = catchAsync(async(req , res , next) => {
     const { firstName , lastName , email , password , gender , dateOfBirth } = req.body;
     if(!firstName || !lastName || !email || !password || !gender || !dateOfBirth){
@@ -37,13 +37,14 @@ exports.register = catchAsync(async(req , res , next) => {
         status : 'success' ,
         success : true , 
         data : { 
-            message : "Registeration successful.",
+            message : "Registration successful.",
             user : newUser ,
             token
         }
     })
 }) ;
 
+// Login user
 exports.login = catchAsync(async (req , res , next) => {
     const { email , password } = req.body;
     if(!email || !password){

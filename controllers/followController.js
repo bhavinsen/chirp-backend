@@ -12,7 +12,7 @@ const sendCreatePostResponse = (res, post) => {
     },
   });
 };
-
+// follow user
 exports.follow = catchAsync(async (req, res,next) => {
   const { following_id } = req.body;
   const follower_id = req.user._id;
@@ -44,12 +44,20 @@ exports.follow = catchAsync(async (req, res,next) => {
     sendCreatePostResponse(res, following);
   }
 });
+// get all followers
 exports.getFollowers = catchAsync(async (req, res,next) => {
   const following_id =req.user._id;
   const followers = await Follow.find({ isFollow: true, following_id:following_id }).populate("follower_id");
+  if (followers.length>0){
+    return res.status(200).json({
+      status: "Success",
+      success: true,
+      data: followers,
+    });
+  }
   res.status(200).json({
     status: "Success",
     success: true,
-    data: followers,
+    data: "No Followers Found",
   });
 });
